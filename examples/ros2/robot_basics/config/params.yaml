@@ -1,0 +1,15 @@
+fake_range_sensor:
+  ros__parameters:
+    rate_hz: 20.0
+    frame_id: range_front
+    noise_m: 0.02
+
+obstacle_monitor:
+  ros__parameters:
+    threshold_m: 0.5
+    filter_alpha: 0.3
+
+safety_driver:
+  ros__parameters:
+    linear_speed: 0.2
+    angular_speed: 1.0
