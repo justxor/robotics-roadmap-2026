@@ -1,3 +1,15 @@
+<p align="center">
+  <img src="assets/banner.svg" alt="Robotics Roadmap 2026 — собери первого робота и войди в робототехнику с нуля" width="100%">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/уровень-с_нуля-ff8a3d" alt="уровень">
+  <img src="https://img.shields.io/badge/срок-6_месяцев-ffc145" alt="срок">
+  <img src="https://img.shields.io/badge/ROS_2-Jazzy-5aa9ff" alt="ROS 2 Jazzy">
+  <img src="https://img.shields.io/badge/MCU-Arduino_%7C_ESP32-00979D" alt="MCU">
+  <img src="https://img.shields.io/badge/лицензия-CC_BY_4.0_%2F_MIT-lightgrey" alt="лицензия">
+</p>
+
 # 🤖 Robotics Roadmap 2026 — как собрать своего первого робота и войти в робототехнику с нуля
 
 > Пошаговый курс на ~6 месяцев (2–3 часа в день): от закона Ома до робота-манипулятора, который учится по демонстрациям.
@@ -208,6 +220,15 @@ ESP32 + 2 мотора с энкодерами + TB6612FNG + MPU-6050 + печа
 
 **🛠 Практика:** настрой линейного робота сначала только P-регулятором, потом добавь D и посмотри, как исчезают колебания. **Сними оба видео рядом** — это лучшее доказательство, что ты понимаешь контур, а не скопировал коэффициенты. Балансир не заработает, пока фильтр и тайминг цикла не будут правильными, — и эта боль и есть обучение.
 
+### 2.6 🌉 Мост к ROS 2: прошивка «нижнего уровня»
+
+Последний шаг модуля 2 и вход в модуль 4: ESP32 держит PID **скорости** каждого колеса, а компьютер по USB только говорит «хочу v и ω» и читает энкодеры — так устроены настоящие роботы.
+
+- Прошивка: [`examples/arduino/07_diffdrive_bridge`](examples/arduino/07_diffdrive_bridge) — PID скорости, текстовый протокол в стиле ros_arduino_bridge, авто-стоп при потере связи.
+- Хост: [`examples/python/diffdrive_teleop.py`](examples/python/diffdrive_teleop.py) — телеуправление WASD, кинематика дифф-привода, одометрия (x, y, θ) и **встроенный симулятор**: `python diffdrive_teleop.py --sim --demo square` работает вообще без железа.
+
+**🛠 Практика:** проедь квадрат 1×1 м по одометрии и измерь рулеткой, где робот реально остановился. Ошибка в сантиметрах — первая метрика в твоём портфолио. Потом эта же прошивка подключается к ros2_control (модуль 4.5).
+
 ### ✅ Чек-лист модуля 2
 - [ ] Управляю скоростью мотора и понимаю разницу между скважностью ШИМ и реальными оборотами
 - [ ] Читаю энкодер и замыкаю контур по позиции
@@ -215,6 +236,7 @@ ESP32 + 2 мотора с энкодерами + TB6612FNG + MPU-6050 + печа
 - [ ] Получаю стабильный угол из акселерометра + гироскопа
 - [ ] Объясняю P, I и D через то, что делал мой робот
 - [ ] Два работающих робота на GitHub со схемами, кодом и разбором поломок
+- [ ] Робот проезжает квадрат по одометрии, ошибка измерена рулеткой
 
 ---
 
@@ -342,6 +364,7 @@ Jazzy — потому что почти все курсы и книги пок�
 
 - [ros2_control docs](https://control.ros.org/rolling/index.html)
 - [Articulated Robotics — ros2_control на реальном железе](https://articulatedrobotics.xyz/tutorials/mobile-robot/applications/ros2_control-real/)
+- Своя прошивка для этого шага уже есть: [`07_diffdrive_bridge`](examples/arduino/07_diffdrive_bridge) + [diffdrive_arduino](https://github.com/joshnewans/diffdrive_arduino)
 
 **🛠 Практика:** `diff_drive_controller` + `joint_state_broadcaster`, езда с клавиатуры в Gazebo; action-сервер «проехать N метров» с фидбеком и отменой. Сильный пункт в портфолио — его мало кто делает.
 
@@ -494,6 +517,7 @@ Jazzy — потому что почти все курсы и книги пок�
 ```
 robotics-roadmap-2026/
 ├── README.md                      ← этот курс
+├── assets/                        ← обложка репозитория
 ├── docs/
 │   └── hardware-bom.md            ← списки компонентов на 3 бюджета
 ├── schematics/
@@ -509,11 +533,13 @@ robotics-roadmap-2026/
     │   ├── 03_imu_complementary/  ← MPU-6050 + комплементарный фильтр
     │   ├── 04_esp32_web_servo/    ← веб-сервер на ESP32 + серво
     │   ├── 05_line_follower_pid/  ← линейный робот на PID
-    │   └── 06_self_balancing/     ← балансир
+    │   ├── 06_self_balancing/     ← балансир
+    │   └── 07_diffdrive_bridge/   ← PID скорости колёс + протокол для ROS 2
     ├── python/
     │   ├── complementary_filter_demo.py
     │   ├── cartpole_lqr.py
-    │   └── two_link_ik.py
+    │   ├── two_link_ik.py
+    │   └── diffdrive_teleop.py    ← телеуправление, одометрия, симулятор
     └── ros2/
         └── robot_basics/          ← пакет ROS 2: ноды, launch, xacro
 ```
