@@ -15,12 +15,79 @@
 > Пошаговый курс на ~6 месяцев (2–3 часа в день): от закона Ома до робота-манипулятора, который учится по демонстрациям.
 > Только открытые и актуальные (2026) ресурсы, схемы подключения, готовые примеры кода и список железа на трёх уровнях бюджета.
 
-Вдохновлено тредом [@DeRonin_ «How to become a Robotics Engineer in 6 months»](https://x.com/DeRonin_/status/2095180126359105955) — материал переработан, структурирован и дополнен схемами и кодом.
+Вдохновлено тредом [@DeRonin_ «How to become a Robotics Engineer in 6 months»](https://x.com/DeRonin_/status/2095180126359105955) — материал переработан, структурирован и дополнен схемами, кодом и справочниками.
+
+## О курсе
+
+Робототехника выглядит как пять профессий, сложенных друг на друга: электроника, программирование микроконтроллеров, механика, ROS и математика управления, а сверху ещё машинное обучение. Поэтому большинство новичков застревают: читают учебник и бросают на матрицах поворота, покупают Arduino и мигают светодиодом, или ставят ROS 2, не понимая, почему мотор не крутится.
+
+Этот курс выстроен **от железа к интеллекту** — в том порядке, в котором реально собирается робот. Каждый шаг заканчивается тем, что что-то **двигается**, а не прочитанной главой.
+
+### Для кого
+
+| Ты… | Что получишь |
+|---|---|
+| программист (backend / frontend / ML) | переход в «физический» мир: МК, моторы, ROS 2, обучение роботов |
+| студент / школьник старших классов | структурированный путь и портфолио для стажировки или олимпиад |
+| инженер-механик / электронщик | недостающий софт: Python, ROS 2, симуляция, управление |
+| мейкер / хоббист | понимание «почему работает», а не только «повторил по видео» |
+
+### Что будет в конце
+
+- 🤖 **5+ работающих роботов**: линейный робот, балансир, дифф-база под ROS 2, робот-рука, рука, обученная по демонстрациям.
+- 📁 **Портфолио на GitHub**: у каждого проекта видео, схема, код, разбор поломок и измеренная цифра результата.
+- 🧠 **Навыки из вакансий**: C++ и Python, ROS 2 (Nav2, ros2_control, MoveIt 2), PID/LQR, фильтры, кинематика, CV, LeRobot.
+- 🗣️ Умение рассказать про каждый проект на собеседовании и ответить на три уточняющих вопроса.
+
+### Формат
+
+| Параметр | Значение |
+|---|---|
+| Длительность | ~24 недели по 2–3 часа в день ([план по неделям](docs/week-by-week.md)) |
+| Стартовый уровень | ноль: школьная математика и умение пользоваться компьютером |
+| Стоимость | $0 в симуляции · ~$150–250 за первые реальные роботы · до ~$600–900 со всем железом |
+| Компьютер | любой ноутбук с 8+ ГБ ОЗУ, GPU не обязателен |
+| ОС | Windows / macOS / Linux; для ROS 2 — Ubuntu 24.04, WSL2 или Docker |
+| Язык ресурсов | в основном английский; русскоязычные — [в отдельном разделе](#русскоязычные-ресурсы) |
+
+## 🚀 Быстрый старт за 30 минут (без железа)
+
+```bash
+# 1. Клонируй курс
+git clone https://github.com/justxor/robotics-roadmap-2026.git && cd robotics-roadmap-2026
+pip install numpy scipy matplotlib
+
+# 2. Почувствуй управление: почему нужен фильтр и чем LQR лучше PID
+python examples/python/complementary_filter_demo.py
+python examples/python/cartpole_lqr.py
+
+# 3. «Поезди» на симуляторе дифф-робота: квадрат по одометрии, затем WASD
+python examples/python/diffdrive_teleop.py --sim --demo square
+python examples/python/diffdrive_teleop.py --sim
+
+# 4. ROS 2 Jazzy в Docker — без установки Ubuntu
+docker run -it --rm osrf/ros:jazzy-desktop ros2 run demo_nodes_cpp talker
+```
+
+Параллельно открой [Falstad](https://www.falstad.com/circuit/) и [Wokwi](https://wokwi.com/) (симулятор Arduino/ESP32 в браузере) — первые две недели курса проходятся там бесплатно.
+
+## 📚 Справочники в репозитории
+
+| Документ | Зачем |
+|---|---|
+| [📅 План по неделям](docs/week-by-week.md) | 24 недели: тема и конкретный результат каждой недели |
+| [🛒 Списки железа (BOM)](docs/hardware-bom.md) | что купить на каждом уровне бюджета |
+| [🔍 Отладка: «не работает — что проверить»](docs/debugging.md) | питание, прошивка, моторы, I2C, PID, ROS 2, 3D-печать |
+| [⚠️ Безопасность](docs/safety.md) | LiPo, пайка, механика — прочитай до первой сборки |
+| [📖 Глоссарий RU ↔ EN](docs/glossary.md) | 100+ терминов, чтобы искать документацию на английском |
+| [💡 30 идей проектов](docs/project-ideas.md) | от начального до продвинутого, с метрикой для портфолио |
+| [❓ FAQ](docs/faq.md) | образование, компьютер, ОС, бюджет, где спросить, как искать работу |
 
 ---
 
 ## Содержание
 
+- [О курсе](#о-курсе) · [Быстрый старт](#-быстрый-старт-за-30-минут-без-железа) · [Справочники](#-справочники-в-репозитории)
 - [Почему робототехника и кто такой робототехник](#почему-робототехника)
 - [Как пользоваться курсом](#как-пользоваться-курсом)
 - [Карта курса](#карта-курса)
@@ -33,7 +100,7 @@
 - [Модуль 6. Обучение роботов, портфолио и работа](#модуль-6-обучение-роботов-портфолио-и-работа-недели-2124)
 - [Частые ловушки новичков](#частые-ловушки-новичков)
 - [Схемы и примеры кода в репозитории](#схемы-и-примеры-кода-в-репозитории)
-- [Дополнительные ресурсы](#дополнительные-ресурсы)
+- [Дополнительные ресурсы](#дополнительные-ресурсы) · [Русскоязычные ресурсы](#русскоязычные-ресурсы) · [Сообщества](#сообщества)
 
 ---
 
@@ -519,7 +586,13 @@ robotics-roadmap-2026/
 ├── README.md                      ← этот курс
 ├── assets/                        ← обложка репозитория
 ├── docs/
-│   └── hardware-bom.md            ← списки компонентов на 3 бюджета
+│   ├── week-by-week.md            ← план на 24 недели
+│   ├── hardware-bom.md            ← списки компонентов на 3 бюджета
+│   ├── debugging.md               ← «не работает — что проверить»
+│   ├── safety.md                  ← безопасность: LiPo, пайка, механика
+│   ├── glossary.md                ← термины RU ↔ EN
+│   ├── project-ideas.md           ← 30 идей проектов для портфолио
+│   └── faq.md                     ← частые вопросы
 ├── schematics/
 │   ├── 01-basics.md               ← делитель, транзисторный ключ, pull-up
 │   ├── 02-motor-driver.md         ← ESP32 + TB6612FNG + моторы с энкодерами
@@ -551,12 +624,26 @@ robotics-roadmap-2026/
 **Сборники**
 - [kiloreux/awesome-robotics](https://github.com/kiloreux/awesome-robotics)
 - [fkromer/awesome-ros2](https://github.com/fkromer/awesome-ros2)
-- [AtsushiSakai/PythonRobotics](https://github.com/AtsushiSakai/PythonRobotics)
+- [AtsushiSakai/PythonRobotics](https://github.com/AtsushiSakai/PythonRobotics) — сотни алгоритмов с анимациями
+- [jslee02/awesome-robotics-libraries](https://github.com/jslee02/awesome-robotics-libraries) — библиотеки и симуляторы
+- [mithi/robotics-coursework](https://github.com/mithi/robotics-coursework) — каталог университетских курсов по робототехнике
 
 **Курсы и платформы**
 - [Duckietown](https://duckietown.com/) — открытая платформа для обучения автономному вождению
 - [MIT 6.4210 Robotic Manipulation](https://manipulation.csail.mit.edu/)
 - [Hugging Face Robotics Course](https://huggingface.co/learn/robotics-course/unit0/1)
+- [3Blue1Brown — Essence of Linear Algebra](https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab) — линейная алгебра визуально, перед модулями 4–5
+- [SLAM Book (Gao Xiang), англ. версия](https://github.com/gaoxiang12/slambook-en) — 14 лекций по visual SLAM с кодом
+
+**Инструменты, которые стоит поставить**
+| Инструмент | Для чего |
+|---|---|
+| [Wokwi](https://wokwi.com/) | симулятор Arduino / ESP32 в браузере |
+| [KiCad](https://www.kicad.org/) | схемы и свои печатные платы (когда надоест макетка) |
+| [PlotJuggler](https://github.com/facontidavide/PlotJuggler) | графики из Serial, CSV и топиков ROS 2 — must have для настройки PID |
+| [Foxglove](https://foxglove.dev/) | визуализация ROS 2 и rosbag в браузере |
+| [PlatformIO](https://platformio.org/) | «взрослая» среда для прошивок вместо Arduino IDE |
+| [VS Code + ROS extension](https://marketplace.visualstudio.com/items?itemName=Ranch-Hand-Robotics.rde-ros-2) | редактор для ROS 2 |
 
 **Книги**
 - Lynch & Park — *Modern Robotics* (бесплатный PDF)
@@ -568,13 +655,42 @@ robotics-roadmap-2026/
 - [SO-ARM100/101](https://github.com/TheRobotStudio/SO-ARM100) — рука
 - [LeKiwi](https://github.com/SIGRobotics-UIUC/LeKiwi) — мобильная база для SO-101
 - [Petoi OpenCat](https://github.com/PetoiCamp/OpenCat) — робот-собака
-- [TurtleBot](https://www.turtlebot.com/) — эталонная платформа ROS
+- [TurtleBot](https://www.turtlebot.com/) — эталонная платформа ROS ([код TurtleBot3](https://github.com/ROBOTIS-GIT/turtlebot3))
+
+**Открытый код, который полезно читать** — как устроены реальные ROS 2-роботы:
+- [linorobot2](https://github.com/linorobot/linorobot2) — полный стек мобильного робота на ROS 2: прошивка МК + Nav2 + SLAM
+- [ros-mobile-robots/diffbot](https://github.com/ros-mobile-robots/diffbot) — дифф-робот с подробной документацией
+- [ros2_control_demos](https://github.com/ros-controls/ros2_control_demos) — официальные примеры hardware interface и контроллеров
+- [micro_ros_arduino](https://github.com/micro-ROS/micro_ros_arduino) — ROS 2 прямо на ESP32
+- [huggingface/lerobot](https://github.com/huggingface/lerobot) — обучение роботов по демонстрациям
+
+## Русскоязычные ресурсы
+
+| Ресурс | Что это |
+|---|---|
+| [Степан Бурмистров — «ROS 2 курс» (Stepik)](https://stepik.org/course/221157) | бесплатный курс по ROS 2 Jazzy для начинающих: Linux/WSL, топики, сервисы, экшены, свой робот на ESP32 + Raspberry Pi ([анонс на Habr](https://habr.com/ru/articles/881816/)) |
+| [stepanburmistrov/ROS2_robotV1](https://github.com/stepanburmistrov/ROS2_robotV1) | код и 3D-модели учебного ROS 2-робота из этого курса |
+| [Stepik: поиск «ROS», «Arduino», «робототехника»](https://stepik.org/catalog/search?q=%D1%80%D0%BE%D0%B1%D0%BE%D1%82%D0%BE%D1%82%D0%B5%D1%85%D0%BD%D0%B8%D0%BA%D0%B0) | много бесплатных курсов; проверяй, что ROS-курс именно про ROS 2 |
+| [Habr: хаб «Робототехника»](https://habr.com/ru/hubs/robot/articles/) | статьи и разборы проектов от инженеров |
+| Ч. Платт, «Электроника для начинающих» | русский перевод *Make: Electronics* |
+
+## Сообщества
+
+| Где | Для чего |
+|---|---|
+| [ROS Russia (Telegram)](https://t.me/rosrussia) | русскоязычный чат по ROS / ROS 2 |
+| [ROS Discourse](https://discourse.openrobotics.org/) | официальный форум ROS: анонсы, обсуждения |
+| [Robotics Stack Exchange](https://robotics.stackexchange.com/) | вопросы и ответы (сюда переехал ROS Answers) |
+| [r/robotics](https://www.reddit.com/r/robotics/), [r/ROS](https://www.reddit.com/r/ROS/) | новости, проекты, советы |
+| [LeRobot Discord](https://discord.gg/q8Dzzpym3f) | сообщество Hugging Face LeRobot и SO-101 |
+
+**Соревнования** — лучший способ быстро прокачаться и попасть на радар работодателей: [Eurobot](https://www.eurobot.org/), [RoboCup](https://www.robocup.org/), [FIRST](https://www.firstinspires.org/), НТО, «Робофест», локальные хакатоны и ROS-митапы.
 
 ---
 
 ## Как помочь проекту
 
-Нашёл битую ссылку или знаешь ресурс лучше — открой Issue или Pull Request. Если курс помог — поставь ⭐ и покажи свой первый робот в Discussions.
+Нашёл битую ссылку или знаешь ресурс лучше — открой Issue или Pull Request (правила — в [CONTRIBUTING.md](CONTRIBUTING.md)). Если курс помог — поставь ⭐ и покажи свой первый робот в Issues с меткой `showcase`.
 
 ## Лицензия
 
