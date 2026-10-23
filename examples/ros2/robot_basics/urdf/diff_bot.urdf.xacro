@@ -1,0 +1,161 @@
+<?xml version="1.0"?>
+<!--
+  Дифференциальный робот: база + 2 колеса + шаровая опора + мачта + pan-tilt голова + лидар.
+  Все размеры — параметры (xacro:property), инерции — через макросы.
+  Проверка: xacro diff_bot.urdf.xacro > /tmp/bot.urdf && check_urdf /tmp/bot.urdf
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="diff_bot">
+
+  <!-- ===== Параметры ===== -->
+  <xacro:property name="base_l" value="0.30"/>
+  <xacro:property name="base_w" value="0.20"/>
+  <xacro:property name="base_h" value="0.08"/>
+  <xacro:property name="base_mass" value="1.5"/>
+  <xacro:property name="wheel_r" value="0.04"/>
+  <xacro:property name="wheel_w" value="0.025"/>
+  <xacro:property name="wheel_mass" value="0.1"/>
+  <xacro:property name="wheel_y" value="${base_w/2 + wheel_w/2 + 0.005}"/>
+  <xacro:property name="mast_h" value="0.15"/>
+
+  <!-- ===== Материалы ===== -->
+  <material name="orange"><color rgba="1.0 0.5 0.1 1"/></material>
+  <material name="black"><color rgba="0.1 0.1 0.1 1"/></material>
+  <material name="grey"><color rgba="0.6 0.6 0.6 1"/></material>
+
+  <!-- ===== Макросы инерции (без них Gazebo «взорвёт» робота) ===== -->
+  <xacro:macro name="box_inertia" params="m x y z">
+    <inertial>
+      <mass value="${m}"/>
+      <inertia ixx="${m*(y*y+z*z)/12}" ixy="0" ixz="0" iyy="${m*(x*x+z*z)/12}" iyz="0" izz="${m*(x*x+y*y)/12}"/>
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="cylinder_inertia" params="m r h">
+    <inertial>
+      <mass value="${m}"/>
+      <inertia ixx="${m*(3*r*r+h*h)/12}" ixy="0" ixz="0" iyy="${m*(3*r*r+h*h)/12}" iyz="0" izz="${m*r*r/2}"/>
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="sphere_inertia" params="m r">
+    <inertial>
+      <mass value="${m}"/>
+      <inertia ixx="${2*m*r*r/5}" ixy="0" ixz="0" iyy="${2*m*r*r/5}" iyz="0" izz="${2*m*r*r/5}"/>
+    </inertial>
+  </xacro:macro>
+
+  <!-- ===== База ===== -->
+  <link name="base_footprint"/>
+
+  <link name="base_link">
+    <visual>
+      <geometry><box size="${base_l} ${base_w} ${base_h}"/></geometry>
+      <material name="orange"/>
+    </visual>
+    <collision>
+      <geometry><box size="${base_l} ${base_w} ${base_h}"/></geometry>
+    </collision>
+    <xacro:box_inertia m="${base_mass}" x="${base_l}" y="${base_w}" z="${base_h}"/>
+  </link>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 ${wheel_r}"/>
+  </joint>
+
+  <!-- ===== Колёса (макрос, вызываем дважды) ===== -->
+  <xacro:macro name="wheel" params="side y_sign">
+    <link name="${side}_wheel">
+      <visual>
+        <origin rpy="${pi/2} 0 0"/>
+        <geometry><cylinder radius="${wheel_r}" length="${wheel_w}"/></geometry>
+        <material name="black"/>
+      </visual>
+      <collision>
+        <origin rpy="${pi/2} 0 0"/>
+        <geometry><cylinder radius="${wheel_r}" length="${wheel_w}"/></geometry>
+      </collision>
+      <xacro:cylinder_inertia m="${wheel_mass}" r="${wheel_r}" h="${wheel_w}"/>
+    </link>
+    <joint name="${side}_wheel_joint" type="continuous">
+      <parent link="base_link"/>
+      <child link="${side}_wheel"/>
+      <origin xyz="${base_l/4} ${y_sign*wheel_y} 0"/>
+      <axis xyz="0 1 0"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:wheel side="left" y_sign="1"/>
+  <xacro:wheel side="right" y_sign="-1"/>
+
+  <!-- ===== Шаровая опора ===== -->
+  <link name="caster">
+    <visual><geometry><sphere radius="${wheel_r/2}"/></geometry><material name="grey"/></visual>
+    <collision><geometry><sphere radius="${wheel_r/2}"/></geometry></collision>
+    <xacro:sphere_inertia m="0.05" r="${wheel_r/2}"/>
+  </link>
+  <joint name="caster_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="caster"/>
+    <origin xyz="${-base_l/2 + 0.03} 0 ${-wheel_r/2}"/>
+  </joint>
+
+  <!-- ===== Лидар ===== -->
+  <link name="laser_frame">
+    <visual><geometry><cylinder radius="0.035" length="0.04"/></geometry><material name="black"/></visual>
+    <collision><geometry><cylinder radius="0.035" length="0.04"/></geometry></collision>
+    <xacro:cylinder_inertia m="0.1" r="0.035" h="0.04"/>
+  </link>
+  <joint name="laser_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="laser_frame"/>
+    <origin xyz="${base_l/4} 0 ${base_h/2 + 0.02}"/>
+  </joint>
+
+  <!-- ===== Мачта + pan-tilt голова с камерой ===== -->
+  <link name="mast">
+    <visual>
+      <origin xyz="0 0 ${mast_h/2}"/>
+      <geometry><cylinder radius="0.01" length="${mast_h}"/></geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 ${mast_h/2}"/>
+      <geometry><cylinder radius="0.01" length="${mast_h}"/></geometry>
+    </collision>
+    <xacro:cylinder_inertia m="0.05" r="0.01" h="${mast_h}"/>
+  </link>
+  <joint name="mast_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="mast"/>
+    <origin xyz="${-base_l/4} 0 ${base_h/2}"/>
+  </joint>
+
+  <link name="pan_link">
+    <visual><geometry><box size="0.03 0.04 0.02"/></geometry><material name="black"/></visual>
+    <collision><geometry><box size="0.03 0.04 0.02"/></geometry></collision>
+    <xacro:box_inertia m="0.03" x="0.03" y="0.04" z="0.02"/>
+  </link>
+  <joint name="pan_joint" type="revolute">
+    <parent link="mast"/>
+    <child link="pan_link"/>
+    <origin xyz="0 0 ${mast_h}"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="${-pi/2}" upper="${pi/2}" effort="1.0" velocity="2.0"/>
+  </joint>
+
+  <link name="camera_link">
+    <visual><geometry><box size="0.02 0.06 0.03"/></geometry><material name="orange"/></visual>
+    <collision><geometry><box size="0.02 0.06 0.03"/></geometry></collision>
+    <xacro:box_inertia m="0.03" x="0.02" y="0.06" z="0.03"/>
+  </link>
+  <joint name="tilt_joint" type="revolute">
+    <parent link="pan_link"/>
+    <child link="camera_link"/>
+    <origin xyz="0.01 0 0.025"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="${-pi/4}" upper="${pi/3}" effort="1.0" velocity="2.0"/>
+  </joint>
+
+</robot>
